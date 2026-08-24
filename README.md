@@ -6,7 +6,7 @@
 
 <sub>把复杂问题做成可验证、可运行的工具。</sub>
 
-[CCN 技术赛事情报台](https://ccn.cwdzone.top/) · [2026 下半年成长路线图](https://plan.cwdzone.top/)
+[CCN 技术赛事情报台](https://ccn.cwdzone.top/)
 
 </div>
 

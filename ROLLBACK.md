@@ -2,22 +2,22 @@
 
 这个仓库使用普通 Git 提交和标签保留每次主页版本，不需要覆盖历史，也不需要强制推送。
 
-## 撤销极简白灰主页
+## 撤销某一次修改
 
-在仓库目录执行：
+先用 `git log --oneline` 找到需要撤销的提交，再执行：
 
 ```powershell
 git switch main
 git pull --ff-only
-git revert profile-v1-minimal-20260824
+git revert <提交哈希>
 git push origin main
 ```
 
-这会创建一个新的撤销提交，把 `README.md` 恢复到改版前的基线状态，并完整保留历史。
+这会创建一个新的撤销提交，并完整保留历史。
 
 ## 从基线重新制作
 
-如果只想取回改版前的 `README.md`，而不撤销其他文件：
+如果想把主页整体恢复到首次改版前，而不改写提交历史：
 
 ```powershell
 git switch main

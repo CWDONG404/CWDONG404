@@ -1,0 +1,39 @@
+name: Generate black-gold contribution animation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 0 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: contribution-animation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out profile repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Generate black-gold contribution SVGs
+        uses: Platane/snk/svg-only@d8f6715049803e982ee5ff501b6b9b7d5deeb09b # v3.5.0
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            assets/contribution-snake-dark.svg?palette=github-dark&color_snake=#F6D675&color_dots=#0D1117,#302817,#66501D,#A77E29,#E4BD55
+            assets/contribution-snake-light.svg?palette=github&color_snake=#A87518&color_dots=#EBEDF0,#E6D8B4,#C9A454,#9D7423,#5B400B
+
+      - name: Commit updated animation
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/contribution-snake-dark.svg assets/contribution-snake-light.svg
+          git diff --cached --quiet || git commit -m "chore: update contribution animation"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

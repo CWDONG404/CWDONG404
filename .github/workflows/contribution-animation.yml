@@ -1,7 +1,14 @@
-name: Generate black-gold contribution animation
+name: Update contribution animation
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/contribution-animation.yml"
+      - "scripts/build_console.py"
+      - "scripts/screen.py"
+      - "assets/handheld-body.webp"
   schedule:
     - cron: "17 0 * * *"
 
@@ -21,19 +28,49 @@ jobs:
       - name: Check out profile repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Generate black-gold contribution SVGs
+      - name: Generate contribution SVGs
         uses: Platane/snk/svg-only@d8f6715049803e982ee5ff501b6b9b7d5deeb09b # v3.5.0
         with:
           github_user_name: ${{ github.repository_owner }}
           outputs: |
-            assets/contribution-snake-dark.svg?palette=github-dark&color_snake=#F6D675&color_dots=#0D1117,#302817,#66501D,#A77E29,#E4BD55
-            assets/contribution-snake-light.svg?palette=github&color_snake=#A87518&color_dots=#EBEDF0,#E6D8B4,#C9A454,#9D7423,#5B400B
+            assets/contribution-snake-dark.svg?palette=github-dark&color_snake=#FF923B&color_dots=#171C22,#78513D,#AD6541,#DB8953,#FFC795
+            assets/contribution-snake-light.svg?palette=github&color_snake=#BF4608&color_dots=#ECE9E5,#C69D83,#AF7151,#904828,#652D19
+
+      - name: Build the contribution console
+        run: |
+          python3 scripts/build_console.py
+          test -s assets/console.svg
+          test -s assets/console-mobile.svg
+          test -s assets/console-still.svg
+          test -s assets/console-mobile-still.svg
 
       - name: Commit updated animation
         shell: bash
         run: |
+          git add assets/contribution-snake-dark.svg assets/contribution-snake-light.svg \
+                  assets/console.svg assets/console-mobile.svg \
+                  assets/console-still.svg assets/console-mobile-still.svg
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+
+          python3 - <<'PY'
+          from datetime import datetime
+          from pathlib import Path
+          import re
+          from zoneinfo import ZoneInfo
+
+          readme = Path("README.md")
+          updated_at = datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M")
+          marker = r"(<!-- snake-updated -->)[^\r\n<]*(<!-- /snake-updated -->)"
+          content, count = re.subn(marker, rf"\g<1>{updated_at}\g<2>", readme.read_text(encoding="utf-8"))
+          if count != 1:
+              raise SystemExit("README.md must contain exactly one snake update timestamp")
+          readme.write_text(content, encoding="utf-8")
+          PY
+
+          git add README.md
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/contribution-snake-dark.svg assets/contribution-snake-light.svg
-          git diff --cached --quiet || git commit -m "chore: update contribution animation"
+          git commit -m "chore: update contribution animation"
           git push origin "HEAD:${GITHUB_REF_NAME}"

@@ -9,7 +9,7 @@
 
 我是 Dong，做测试开发，关注 Windows 安全和 AI 应用。掌机里跑的是我过去一年的公开贡献日历，每个亮格代表一个有贡献的日子。
 
-<sub>贡献快照 · <!-- snake-updated -->2026-11-20 15:26<!-- /snake-updated -->（北京时间） · <a href="https://github.com/CWDONG404/CWDONG404/actions/workflows/contribution-animation.yml">生成记录</a></sub>
+<sub>贡献快照 · <!-- snake-updated -->2026-11-21 15:20<!-- /snake-updated -->（北京时间） · <a href="https://github.com/CWDONG404/CWDONG404/actions/workflows/contribution-animation.yml">生成记录</a></sub>
 
 ## 项目卡带
 
